@@ -14,6 +14,29 @@
   --danger: #fb7185;
   --warn: #fbbf24;
   --info: #7dd3fc;
+
+  /* Code surfaces follow the theme, so every code token lives in a variable. */
+  --code-bg: #0a0d12;
+  --code-bar: #10151d;
+  --code-line: rgba(255, 255, 255, 0.07);
+  --code-fg: #d7e2f0;
+  --code-muted: rgba(255, 255, 255, 0.58);
+  --code-subtle: rgba(255, 255, 255, 0.38);
+  --code-gutter: rgba(255, 255, 255, 0.26);
+  --code-hover: rgba(255, 255, 255, 0.08);
+  --code-scrollbar: #33405a;
+  --code-scrollbar-hover: #4a5874;
+
+  --hl-comment: #63758c;
+  --hl-keyword: #c4a7f7;
+  --hl-string: #9ece6a;
+  --hl-number: #f7a072;
+  --hl-title: #82aaff;
+  --hl-type: #ffcb6b;
+  --hl-attr: #89ddff;
+  --hl-meta: #ff9cac;
+  --hl-tag: #f07178;
+  --hl-deletion: #ff5370;
 }
 
 .light {
@@ -30,6 +53,28 @@
   --danger: #dc2626;
   --warn: #b45309;
   --info: #0369a1;
+
+  --code-bg: #f8fafc;
+  --code-bar: #eef2f7;
+  --code-line: #e2e7ef;
+  --code-fg: #1f2937;
+  --code-muted: #55637a;
+  --code-subtle: #6b7a90;
+  --code-gutter: #9aa7ba;
+  --code-hover: rgba(15, 23, 42, 0.06);
+  --code-scrollbar: #c3ccda;
+  --code-scrollbar-hover: #a6b1c3;
+
+  --hl-comment: #7b8794;
+  --hl-keyword: #7c3aed;
+  --hl-string: #15803d;
+  --hl-number: #b45309;
+  --hl-title: #1d4ed8;
+  --hl-type: #a16207;
+  --hl-attr: #0e7490;
+  --hl-meta: #be123c;
+  --hl-tag: #b91c1c;
+  --hl-deletion: #dc2626;
 }
 
 @theme inline {
@@ -132,17 +177,17 @@
 }
 
 /* ------------------------------------------------------------------ */
-/* code highlighting (always on a dark surface)                        */
+/* code highlighting (palette follows the theme via --hl-* tokens)      */
 /* ------------------------------------------------------------------ */
 
 .hljs {
-  color: #d7e2f0;
+  color: var(--code-fg);
   background: transparent;
 }
 
 .hljs-comment,
 .hljs-quote {
-  color: #63758c;
+  color: var(--hl-comment);
   font-style: italic;
 }
 
@@ -151,7 +196,7 @@
 .hljs-literal,
 .hljs-doctag,
 .hljs-formula {
-  color: #c4a7f7;
+  color: var(--hl-keyword);
 }
 
 .hljs-string,
@@ -159,7 +204,7 @@
 .hljs-addition,
 .hljs-attribute,
 .hljs-meta .hljs-string {
-  color: #9ece6a;
+  color: var(--hl-string);
 }
 
 .hljs-number,
@@ -168,21 +213,21 @@
 .hljs-link,
 .hljs-selector-attr,
 .hljs-selector-pseudo {
-  color: #f7a072;
+  color: var(--hl-number);
 }
 
 .hljs-title,
 .hljs-title.function_,
 .hljs-section,
 .hljs-name {
-  color: #82aaff;
+  color: var(--hl-title);
 }
 
 .hljs-title.class_,
 .hljs-type,
 .hljs-class .hljs-title,
 .hljs-built_in {
-  color: #ffcb6b;
+  color: var(--hl-type);
 }
 
 .hljs-attr,
@@ -190,22 +235,22 @@
 .hljs-template-variable,
 .hljs-property,
 .hljs-params {
-  color: #89ddff;
+  color: var(--hl-attr);
 }
 
 .hljs-meta,
 .hljs-meta .hljs-keyword {
-  color: #ff9cac;
+  color: var(--hl-meta);
 }
 
 .hljs-tag,
 .hljs-selector-id,
 .hljs-selector-class {
-  color: #f07178;
+  color: var(--hl-tag);
 }
 
 .hljs-deletion {
-  color: #ff5370;
+  color: var(--hl-deletion);
 }
 
 .hljs-emphasis {
@@ -214,6 +259,38 @@
 
 .hljs-strong {
   font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ */
+/* code surfaces: themed scrollbars that match the code background     */
+/* ------------------------------------------------------------------ */
+
+.code-surface {
+  scrollbar-width: thin;
+  scrollbar-color: var(--code-scrollbar) transparent;
+}
+
+.code-surface::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.code-surface::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.code-surface::-webkit-scrollbar-thumb {
+  background: var(--code-scrollbar);
+  border: 2px solid var(--code-bg);
+  border-radius: 999px;
+}
+
+.code-surface::-webkit-scrollbar-thumb:hover {
+  background: var(--code-scrollbar-hover);
+}
+
+.code-surface::-webkit-scrollbar-corner {
+  background: transparent;
 }
 
 /* ------------------------------------------------------------------ */

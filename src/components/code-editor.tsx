@@ -67,23 +67,23 @@ export function CodeEditor({
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       className={cn(
-        "group relative overflow-hidden rounded-xl border bg-[#0a0d12] transition",
+        "group relative overflow-hidden rounded-xl border bg-[var(--code-bg)] transition",
         dragging ? "border-accent/70 ring-4 ring-accent/10" : "border-line",
       )}
     >
-      <div className="flex h-11 items-center gap-2 border-b border-white/[0.06] bg-white/[0.02] px-3">
-        <span className="flex items-center gap-1.5 font-mono text-[11px] text-white/40">
+      <div className="flex h-11 items-center gap-2 border-b border-[var(--code-line)] bg-[var(--code-bar)] px-3">
+        <span className="flex items-center gap-1.5 font-mono text-[11px] text-[var(--code-subtle)]">
           <span className="size-1.5 rounded-full bg-accent/70" />
           editor
         </span>
-        <span className="text-[11px] text-white/20">·</span>
-        <span className="text-[11px] text-white/40">{lineCount} 行</span>
+        <span className="text-[11px] text-[var(--code-subtle)]">·</span>
+        <span className="text-[11px] text-[var(--code-subtle)]">{lineCount} 行</span>
         <div className="ml-auto flex items-center gap-1">
           {onDetectLanguage ? (
             <button
               type="button"
               onClick={onDetectLanguage}
-              className="flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] text-white/45 transition hover:bg-white/5 hover:text-white/80"
+              className="flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] text-[var(--code-muted)] transition hover:bg-[var(--code-hover)] hover:text-[var(--code-fg)]"
               title="根据内容猜测语言"
             >
               <Sparkles className="size-3.5" />
@@ -95,7 +95,7 @@ export function CodeEditor({
             onClick={() => setWrap((current) => !current)}
             className={cn(
               "flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] transition",
-              wrap ? "bg-accent/10 text-accent" : "text-white/45 hover:bg-white/5 hover:text-white/80",
+              wrap ? "bg-accent/15 text-accent" : "text-[var(--code-muted)] hover:bg-[var(--code-hover)] hover:text-[var(--code-fg)]",
             )}
             title={wrap ? "关闭自动换行" : "自动换行"}
           >
@@ -107,7 +107,7 @@ export function CodeEditor({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] text-white/45 transition hover:bg-white/5 hover:text-white/80"
+                className="flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] text-[var(--code-muted)] transition hover:bg-[var(--code-hover)] hover:text-[var(--code-fg)]"
                 title="导入文本文件"
               >
                 <FileUp className="size-3.5" />
@@ -134,7 +134,7 @@ export function CodeEditor({
           <div
             ref={gutterRef}
             aria-hidden
-            className="w-12 shrink-0 select-none overflow-hidden border-r border-white/[0.06] bg-white/[0.015] py-4 text-right font-mono text-[12.5px] leading-6 text-white/20"
+            className="w-12 shrink-0 select-none overflow-hidden border-r border-[var(--code-line)] bg-[var(--code-bar)] py-4 text-right font-mono text-[12.5px] leading-6 text-[var(--code-gutter)]"
           >
             {Array.from({ length: lineCount }, (_, index) => (
               <div key={index} className="pr-3">
@@ -155,23 +155,23 @@ export function CodeEditor({
           wrap={wrap ? "soft" : "off"}
           placeholder={placeholder}
           className={cn(
-            "h-full flex-1 resize-none bg-transparent px-4 py-4 font-mono text-[12.5px] leading-6 text-[#d7e2f0]",
-            "placeholder:text-white/25 focus:outline-none",
+            "code-surface h-full flex-1 resize-none bg-transparent px-4 py-4 font-mono text-[12.5px] leading-6 text-[var(--code-fg)]",
+            "placeholder:text-[var(--code-subtle)] focus:outline-none",
             wrap ? "whitespace-pre-wrap break-words" : "whitespace-pre",
           )}
         />
       </div>
 
-      <div className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[11px]">
-        <span className={overLimit ? "text-rose-400" : "text-white/35"}>
+      <div className="flex items-center justify-between border-t border-[var(--code-line)] bg-[var(--code-bar)] px-3 py-2 text-[11px]">
+        <span className={overLimit ? "text-rose-400" : "text-[var(--code-subtle)]"}>
           {formatBytes(byteSize)} / {formatBytes(maxBytes)}
           {overLimit ? " · 超出大小限制" : ""}
         </span>
-        <span className="text-white/30">拖入文件可直接导入</span>
+        <span className="text-[var(--code-subtle)]">拖入文件可直接导入</span>
       </div>
 
       {dragging ? (
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-[#0a0d12]/80 backdrop-blur-sm">
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center bg-canvas/80 backdrop-blur-sm">
           <div className="flex flex-col items-center gap-2 text-accent">
             <FileUp className="size-6" />
             <span className="text-xs font-medium">松手导入文件</span>
