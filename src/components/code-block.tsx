@@ -30,13 +30,16 @@ export function CodeBlock({
   return (
     <div className={cn("overflow-hidden rounded-xl border border-line bg-[#0a0d12] shadow-lg shadow-black/10", className)}>
       {showToolbar ? (
-        <div className="flex h-11 items-center gap-3 border-b border-line/80 bg-surface/60 px-3">
-          <span className="flex items-center gap-1.5 text-[11px] font-medium text-muted">
+        // The code surface is always dark, so this bar uses explicit white
+        // alphas instead of the theme tokens: `text-muted` on `bg-surface/60`
+        // read as a washed-out grey band in light mode.
+        <div className="flex h-11 items-center gap-3 border-b border-white/[0.06] bg-white/[0.03] px-3">
+          <span className="flex items-center gap-1.5 text-[11px] font-medium text-white/55">
             <Code2 className="size-3.5 text-accent/80" />
             {languageLabel(language)}
           </span>
-          {filename ? <span className="truncate font-mono text-[11px] text-muted/60">{filename}</span> : null}
-          <span className="ml-auto flex items-center gap-2 text-[11px] text-muted/60">
+          {filename ? <span className="truncate font-mono text-[11px] text-white/30">{filename}</span> : null}
+          <span className="ml-auto flex items-center gap-2 text-[11px] text-white/35">
             <span className="hidden sm:inline">{lineCount} 行</span>
             <span className="hidden sm:inline">·</span>
             <span>{formatBytes(byteSize)}</span>
@@ -47,14 +50,14 @@ export function CodeBlock({
               onClick={() => setWrap((value) => !value)}
               className={cn(
                 "flex h-7 items-center gap-1.5 rounded-md px-2 text-[11px] transition",
-                wrap ? "bg-accent/10 text-accent" : "text-muted hover:bg-surface-2 hover:text-ink",
+                wrap ? "bg-accent/15 text-accent" : "text-white/45 hover:bg-white/10 hover:text-white/85",
               )}
               title={wrap ? "关闭自动换行" : "自动换行"}
             >
               <WrapText className="size-3.5" />
               <span className="hidden sm:inline">换行</span>
             </button>
-            <CopyButton value={code} size="icon-sm" variant="ghost" showLabel={false} />
+            <CopyButton value={code} size="icon-sm" variant="ghost-dark" showLabel={false} />
           </div>
         </div>
       ) : null}
@@ -62,7 +65,7 @@ export function CodeBlock({
       <div className={cn("overflow-auto", maxHeightClass)}>
         <div className="flex w-max min-w-full">
           {!wrap ? (
-            <div className="sticky left-0 z-10 shrink-0 select-none border-r border-line/60 bg-[#0a0d12] px-3 py-4 text-right font-mono text-[12px] leading-6 text-muted/30">
+            <div className="sticky left-0 z-10 shrink-0 select-none border-r border-white/[0.06] bg-[#0a0d12] px-3 py-4 text-right font-mono text-[12px] leading-6 text-white/25">
               {numbers.map((number) => (
                 <div key={number}>{number}</div>
               ))}
@@ -83,9 +86,9 @@ export function CodeBlock({
       </div>
 
       {!showToolbar ? (
-        <div className="flex items-center justify-between border-t border-line/70 px-3 py-2 text-[11px] text-muted/60">
+        <div className="flex items-center justify-between border-t border-white/[0.07] px-3 py-2 text-[11px] text-white/40">
           <span>{languageLabel(language)} · {lineCount} 行</span>
-          <CopyButton value={code} size="sm" variant="ghost" />
+          <CopyButton value={code} size="sm" variant="ghost-dark" />
         </div>
       ) : null}
     </div>

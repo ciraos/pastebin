@@ -13,7 +13,7 @@ import Link from "next/link";
 import { ChevronDown, Loader2, X } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
 
-type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "outline";
+type ButtonVariant = "primary" | "secondary" | "ghost" | "ghost-dark" | "danger" | "outline";
 type ButtonSize = "sm" | "md" | "lg" | "icon" | "icon-sm";
 
 const buttonBase =
@@ -27,6 +27,9 @@ const buttonVariants: Record<ButtonVariant, string> = {
   secondary:
     "border border-line bg-surface-2 text-ink hover:border-line-strong hover:bg-surface-2/80 active:scale-[0.99]",
   ghost: "text-muted hover:bg-surface-2 hover:text-ink",
+  // For controls that sit on an always-dark surface (code blocks): the palette
+  // tokens invert with the app theme, so they must not be used there.
+  "ghost-dark": "text-white/55 hover:bg-white/10 hover:text-white",
   outline: "border border-line bg-transparent text-ink hover:border-accent/40 hover:text-accent",
   danger: "border border-danger/25 bg-danger/10 text-danger hover:bg-danger/20",
 };
