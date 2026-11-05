@@ -3,12 +3,12 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "node scripts/dev.mjs",
-    "dev:web": "next dev -p 3128",
+    "dev": "next dev -p 3128",
     "build": "next build",
     "start": "next start -p 3128",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit",
+    "copy": "cpy \"public/**/*\" .next/standalone/ --base=cwd && cpy \".next/static/**/*\" .next/standalone/ --base=cwd",
+    "deploy": "pnpm install && pnpm build && pnpm copy && export PORT=3128 && node .next/standalone/server.js",
     "db:init": "node scripts/pg.mjs init",
     "db:start": "node scripts/pg.mjs start",
     "db:stop": "node scripts/pg.mjs stop",
@@ -16,9 +16,7 @@
     "db:ensure": "node scripts/pg.mjs ensure",
     "db:import-sqlite": "node scripts/import-sqlite.mjs",
     "test:api": "node scripts/test-api.mjs",
-    "copy": "cpy \"public/**/*\" .next/standalone/ --base=cwd && cpy \".next/static/**/*\" .next/standalone/ --base=cwd",
-    "start:standalone": "node scripts/start-standalone.mjs",
-    "deploy": "pnpm install && pnpm build && pnpm copy && node scripts/start-standalone.mjs"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "highlight.js": "^11.12.0",
