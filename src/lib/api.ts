@@ -18,6 +18,8 @@ type ApiOptions = {
 
 export async function api<T>(path: string, options: ApiOptions = {}): Promise<T> {
   const { method = "GET", body, signal } = options;
+  // FormData goes through untouched: the browser has to set the boundary itself.
+  const isForm = typeof FormData !== "undefined" && body instanceof FormData;
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
@@ -25,8 +27,8 @@ export async function api<T>(path: string, options: ApiOptions = {}): Promise<T>
       credentials: "include",
       cache: "no-store",
       signal,
-      headers: body === undefined ? undefined : { "Content-Type": "application/json" },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      headers: body === undefined || isForm ? undefined : { "Content-Type": "application/json" },
+      body: body === undefined ? undefined : isForm ? (body as FormData) : JSON.stringify(body),
     });
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {

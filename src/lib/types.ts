@@ -94,4 +94,6 @@ export type SiteSettings = {
   site_name: string;
   icp_number: string;
   police_number: string;
+  /** Versioned URL of the uploaded site avatar; null when none is set. */
+  avatar_url: string | null;
 };

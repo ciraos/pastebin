@@ -10,6 +10,7 @@ function wire(settings: SiteSettings) {
     site_name: settings.siteName,
     icp_number: settings.icpNumber,
     police_number: settings.policeNumber,
+    avatar_url: settings.avatarUrl,
   };
 }
 

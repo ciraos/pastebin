@@ -83,14 +83,16 @@ class Client {
   }
 
   async request(method, path, { body, headers = {} } = {}) {
+    // FormData must go through untouched so the runtime sets the multipart boundary.
+    const isForm = typeof FormData !== "undefined" && body instanceof FormData;
     const response = await fetch(`${BASE}${path}`, {
       method,
       headers: {
-        ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+        ...(body === undefined || isForm ? {} : { "Content-Type": "application/json" }),
         ...(this.cookies.size ? { Cookie: this.cookieHeader() } : {}),
         ...headers,
       },
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isForm ? body : JSON.stringify(body),
       redirect: "manual",
     });
     this.store(response);
@@ -379,6 +381,38 @@ try {
   check("成员不能读取站点设置", memberSettingsRead.status === 403, memberSettingsRead.status);
   const memberSettingsWrite = await member.request("PATCH", "/api/admin/settings", { body: { site_name: "hack" } });
   check("成员不能修改站点设置", memberSettingsWrite.status === 403, memberSettingsWrite.status);
+
+  console.log("\n站点头像");
+  // 1×1 transparent PNG.
+  const png = Buffer.from(
+    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+    "base64",
+  );
+  const avatarForm = () => {
+    const form = new FormData();
+    form.append("file", new Blob([png], { type: "image/png" }), "avatar.png");
+    return form;
+  };
+
+  const uploadedAvatar = await admin.request("POST", "/api/admin/settings/avatar", { body: avatarForm() });
+  check("管理员可以上传站点头像", uploadedAvatar.status === 200 && typeof uploadedAvatar.data?.avatar_url === "string", uploadedAvatar.data);
+
+  const avatarResponse = await fetch(`${BASE}/api/site/avatar`);
+  check("GET /api/site/avatar 返回 PNG", avatarResponse.status === 200 && avatarResponse.headers.get("content-type") === "image/png");
+  check("头像响应可长期缓存", (avatarResponse.headers.get("cache-control") ?? "").includes("immutable"));
+
+  const badType = new FormData();
+  badType.append("file", new Blob([Buffer.from("not an image")], { type: "text/plain" }), "a.txt");
+  const badTypeUpload = await admin.request("POST", "/api/admin/settings/avatar", { body: badType });
+  check("非图片类型被拒绝", badTypeUpload.status === 422, badTypeUpload.data);
+
+  const memberAvatarUpload = await member.request("POST", "/api/admin/settings/avatar", { body: avatarForm() });
+  check("成员不能上传站点头像", memberAvatarUpload.status === 403, memberAvatarUpload.status);
+
+  const removedAvatar = await admin.request("DELETE", "/api/admin/settings/avatar");
+  check("可以移除站点头像", removedAvatar.status === 200 && removedAvatar.data?.avatar_url === null, removedAvatar.data);
+  const avatarAfterRemove = await fetch(`${BASE}/api/site/avatar`);
+  check("移除后头像返回 404", avatarAfterRemove.status === 404, avatarAfterRemove.status);
 
   console.log("\n改密码与会话");
   const changed = await admin.request("POST", "/api/auth/password", {

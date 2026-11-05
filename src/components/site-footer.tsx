@@ -4,7 +4,7 @@ import { useSiteConfig } from "./site-config-provider";
 
 /** Site footer with the optional ICP / 公安备案 numbers configured in the admin backend. */
 export function SiteFooter() {
-  const { siteName, icpNumber, policeNumber } = useSiteConfig();
+  const { siteName, icpNumber, policeNumber, avatarUrl } = useSiteConfig();
   const hasFilings = Boolean(icpNumber || policeNumber);
 
   return (
@@ -12,9 +12,20 @@ export function SiteFooter() {
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-3 px-4 py-8 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-2.5">
-            <span className="flex size-6 items-center justify-center rounded-md border border-accent/25 bg-accent/10 font-mono text-[10px] font-bold text-accent">
-              &gt;_
-            </span>
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- small, immutable asset served by /api/site/avatar
+              <img
+                src={avatarUrl}
+                alt=""
+                width={24}
+                height={24}
+                className="size-6 shrink-0 rounded-md border border-line object-cover"
+              />
+            ) : (
+              <span className="flex size-6 items-center justify-center rounded-md border border-accent/25 bg-accent/10 font-mono text-[10px] font-bold text-accent">
+                &gt;_
+              </span>
+            )}
             <span className="text-xs text-muted">{siteName} · 代码与报错分享</span>
           </div>
           <p className="text-[11px] text-muted/60">由 Next.js 与 PostgreSQL 驱动 · 数据保存在你自己的服务器</p>

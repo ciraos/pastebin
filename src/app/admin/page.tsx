@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Database,
@@ -47,8 +47,11 @@ function AdminContent() {
   const [siteName, setSiteName] = useState("");
   const [icpNumber, setIcpNumber] = useState("");
   const [policeNumber, setPoliceNumber] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarSaving, setAvatarSaving] = useState(false);
   const [savingSettings, setSavingSettings] = useState(false);
   const [settingsError, setSettingsError] = useState<string | null>(null);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<User | null>(null);
@@ -82,6 +85,7 @@ function AdminContent() {
         setSiteName(settingsData.settings.site_name);
         setIcpNumber(settingsData.settings.icp_number);
         setPoliceNumber(settingsData.settings.police_number);
+        setAvatarUrl(settingsData.settings.avatar_url);
         setError(null);
       })
       .catch((loadError: unknown) => {
@@ -213,6 +217,7 @@ function AdminContent() {
       setSiteName(data.settings.site_name);
       setIcpNumber(data.settings.icp_number);
       setPoliceNumber(data.settings.police_number);
+      setAvatarUrl(data.settings.avatar_url);
       toast("站点设置已更新");
       // Re-render the cached layout so the header/footer pick up the new values.
       router.refresh();
@@ -220,6 +225,43 @@ function AdminContent() {
       setSettingsError(errorMessage(saveError));
     } finally {
       setSavingSettings(false);
+    }
+  }
+
+  async function uploadAvatar(file: File) {
+    if (avatarSaving) return;
+    setAvatarSaving(true);
+    setSettingsError(null);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const data = await api<{ avatar_url: string | null }>("/admin/settings/avatar", {
+        method: "POST",
+        body: form,
+      });
+      setAvatarUrl(data.avatar_url);
+      toast("站点头像已更新");
+      router.refresh();
+    } catch (uploadError) {
+      setSettingsError(errorMessage(uploadError));
+    } finally {
+      setAvatarSaving(false);
+    }
+  }
+
+  async function removeAvatar() {
+    if (avatarSaving) return;
+    setAvatarSaving(true);
+    setSettingsError(null);
+    try {
+      const data = await api<{ avatar_url: string | null }>("/admin/settings/avatar", { method: "DELETE" });
+      setAvatarUrl(data.avatar_url);
+      toast("已移除站点头像");
+      router.refresh();
+    } catch (removeError) {
+      setSettingsError(errorMessage(removeError));
+    } finally {
+      setAvatarSaving(false);
     }
   }
 
@@ -308,6 +350,59 @@ function AdminContent() {
             hint="填了才在页脚展示"
           />
         </div>
+
+        <div className="flex flex-col gap-4 border-t border-line px-4 py-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            {avatarUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- served by /api/site/avatar with immutable caching
+              <img
+                src={avatarUrl}
+                alt="站点头像预览"
+                width={48}
+                height={48}
+                className="size-12 shrink-0 rounded-xl border border-line object-cover"
+              />
+            ) : (
+              <span className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-dashed border-line-strong bg-canvas/40 font-mono text-sm font-bold text-muted">
+                &gt;_
+              </span>
+            )}
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-ink">站点头像</p>
+              <p className="mt-0.5 text-[11px] leading-5 text-muted">
+                PNG / JPEG / WebP / GIF，不超过 512 KB；显示在页眉和页脚，留空则用默认的 &gt;_ 标记。
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 sm:ml-auto">
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              className="hidden"
+              onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = "";
+                if (file) void uploadAvatar(file);
+              }}
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              loading={avatarSaving}
+              onClick={() => avatarInputRef.current?.click()}
+            >
+              {avatarUrl ? "更换头像" : "上传头像"}
+            </Button>
+            {avatarUrl ? (
+              <Button type="button" variant="ghost" size="sm" disabled={avatarSaving} onClick={() => void removeAvatar()}>
+                移除
+              </Button>
+            ) : null}
+          </div>
+        </div>
+
         {settingsError ? (
           <p className="border-t border-line px-4 py-2 text-xs text-danger">{settingsError}</p>
         ) : null}

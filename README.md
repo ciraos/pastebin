@@ -47,13 +47,16 @@ pnpm dev                    # http://localhost:3128
 
 ## 站点设置（后台）
 
-管理员在 `/admin` 的「站点设置」里可以改这三项，保存在 PostgreSQL 的 `settings` 表：
+管理员在 `/admin` 的「站点设置」里可以改这几项，保存在 PostgreSQL 的 `settings` 表：
 
 | 项 | 说明 |
 | --- | --- |
 | 站点名称 | 显示在浏览器标题、页眉、页脚；留空则回退 `.env` 的 `APP_NAME` |
+| 站点头像 | 上传 PNG / JPEG / WebP / GIF（≤ 512 KB），显示在页眉与页脚；留空则用默认的 `>_` 标记 |
 | ICP 备案号 | 例如 `粤ICP备2024012345号-1`；填了才在页脚展示，链接到工信部备案系统 |
 | 公安备案号 | 例如 `粤公网安备 44030002001234号`；填了才在页脚展示，链接到公安部备案系统 |
+
+头像以 `data:` URL 存在 `settings` 表里，通过 `GET /api/site/avatar` 提供给页面；URL 带版本号（`?v=…`），每次上传都会变，所以图片可以被浏览器长期缓存。
 
 保存后通过 `revalidateTag("site-settings")` 立即生效（站点设置是 60 秒的 `use cache` 缓存，只在保存时失效）。
 
@@ -105,6 +108,7 @@ pnpm db:stop      # 停止本地实例
 - `POST /api/auth/login`、`POST /api/auth/logout`、`GET|PATCH /api/auth/me`、`POST /api/auth/password`
 - `GET|POST /api/pastes`、`GET|PATCH|DELETE /api/pastes/{id}`、`POST /api/pastes/{id}/unlock`、`GET /api/pastes/{id}/raw`
 - `GET /api/stats`、`GET /api/stats/public`
+- `GET /api/site/avatar` / `POST|DELETE /api/admin/settings/avatar`
 - `GET|POST /api/admin/users`、`PATCH|DELETE /api/admin/users/{id}`、`GET /api/admin/overview`
 
 错误统一为 `{ "detail": { "code": "…", "message": "…" } }`；被限流时额外带 `Retry-After` 头（秒）。

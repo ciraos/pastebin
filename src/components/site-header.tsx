@@ -27,7 +27,7 @@ const navItems = [
 export function SiteHeader() {
   const pathname = usePathname();
   const { user, loading, logout } = useAuth();
-  const { siteName } = useSiteConfig();
+  const { siteName, avatarUrl } = useSiteConfig();
   // Auth is resolved on the client, so the server HTML always shows the skeleton.
   // Branching on `mounted` keeps the first client render identical and avoids a
   // hydration mismatch when the session resolves before hydration finishes.
@@ -69,9 +69,20 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-line/70 bg-canvas/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-6xl items-center gap-3 px-4 sm:px-6">
         <Link href="/" className="group flex shrink-0 items-center gap-2.5" aria-label={`${siteName} 首页`}>
-          <span className="flex size-8 items-center justify-center rounded-lg border border-accent/30 bg-accent/10 font-mono text-[13px] font-bold text-accent transition group-hover:bg-accent/15">
-            &gt;_
-          </span>
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element -- small, immutable asset served by /api/site/avatar
+            <img
+              src={avatarUrl}
+              alt=""
+              width={32}
+              height={32}
+              className="size-8 shrink-0 rounded-lg border border-line object-cover shadow-sm shadow-black/10 transition group-hover:border-line-strong"
+            />
+          ) : (
+            <span className="flex size-8 items-center justify-center rounded-lg border border-accent/30 bg-accent/10 font-mono text-[13px] font-bold text-accent transition group-hover:bg-accent/15">
+              &gt;_
+            </span>
+          )}
           <span className="flex items-baseline gap-1.5">
             <span className="text-[15px] font-semibold tracking-tight text-ink">{siteName}</span>
             <span className="hidden text-[10px] font-medium uppercase tracking-[0.16em] text-muted/70 sm:inline">paste</span>
