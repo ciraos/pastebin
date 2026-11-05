@@ -333,9 +333,8 @@ function DashboardContent() {
                       label="复制链接"
                       copiedLabel="已复制"
                       variant="ghost"
-                      size="sm"
+                      size="icon"
                       showLabel={false}
-                      className="size-8"
                     />
                   ) : null}
                   <Link href={`/p/${paste.id}`} aria-label="查看">

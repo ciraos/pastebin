@@ -54,7 +54,7 @@ export function CodeBlock({
               <WrapText className="size-3.5" />
               <span className="hidden sm:inline">换行</span>
             </button>
-            <CopyButton value={code} size="sm" variant="ghost" showLabel={false} className="h-7 w-7" />
+            <CopyButton value={code} size="icon-sm" variant="ghost" showLabel={false} />
           </div>
         </div>
       ) : null}

@@ -14,7 +14,7 @@ import { ChevronDown, Loader2, X } from "lucide-react";
 import { cn, initials } from "@/lib/utils";
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "outline";
-type ButtonSize = "sm" | "md" | "lg" | "icon";
+type ButtonSize = "sm" | "md" | "lg" | "icon" | "icon-sm";
 
 const buttonBase =
   "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-all duration-150 select-none " +
@@ -36,6 +36,10 @@ const buttonSizes: Record<ButtonSize, string> = {
   md: "h-10 px-4 text-sm",
   lg: "h-12 px-6 text-[15px]",
   icon: "h-9 w-9 p-0",
+  // Compact icon-only button for dense toolbars. Padding must stay 0: the size
+  // utilities are not order-aware, so overriding `px-3` from `sm` via className
+  // leaves 4px of content box and squashes the 14px icon into a dot.
+  "icon-sm": "h-7 w-7 p-0",
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
